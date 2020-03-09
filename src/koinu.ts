@@ -1,7 +1,9 @@
+import { PAsm, ParseTree } from 'pegtree';
+import { PEG as CJ } from './cj'
 
-type dict = {[key:string]: [string|undefined,any]}
+type dict = { [key: string]: [string | undefined, any] }
 
-const D:dict = {
+const D: dict = {
   '色': ['fillStyle', undefined],
   '赤': [undefined, '#e60033'],
   '跳ねる': ['restitution', 0.8],
@@ -11,13 +13,13 @@ const D:dict = {
 
 
 class Expr {
-  conv(D: dict): [string|undefined,any] {
+  conv(D: dict): [string | undefined, any] {
     return [undefined, undefined]
   }
 }
 
-const toExpr = (e: Expr|string) => {
-  if(typeof e === 'string') {
+const toExpr = (e: Expr | string) => {
+  if (typeof e === 'string') {
     return new Token(e);
   }
   return e;
@@ -32,10 +34,10 @@ class Let extends Expr {
     this.e1 = toExpr(e1)
     this.e2 = toExpr(e2)
   }
-  conv(D: dict) :[string|undefined, any] {
+  conv(D: dict): [string | undefined, any] {
     const kv1 = this.e1.conv(D);
     const kv2 = this.e2.conv(D);
-    return [kv1[0], kv2[1]] ;
+    return [kv1[0], kv2[1]];
   }
 
 }
@@ -46,9 +48,9 @@ class More extends Expr {
     super()
     this.e = toExpr(e)
   }
-  conv(D: dict) :[string|undefined, any] {
+  conv(D: dict): [string | undefined, any] {
     const kv = this.e.conv(D);
-    if(typeof kv[1] === 'number') {
+    if (typeof kv[1] === 'number') {
       return [kv[0], kv[1] * 1.25]
     }
     return kv;
@@ -61,9 +63,9 @@ class Less extends Expr {
     super()
     this.e = e
   }
-  conv(D: dict) :[string|undefined, any] {
+  conv(D: dict): [string | undefined, any] {
     const kv = this.e.conv(D);
-    if(typeof kv[1] === 'number') {
+    if (typeof kv[1] === 'number') {
       return [kv[0], kv[1] * 0.75]
     }
     return kv;
@@ -76,9 +78,9 @@ class Not extends Expr {
     super()
     this.e = e
   }
-  conv(D: dict) :[string|undefined, any] {
+  conv(D: dict): [string | undefined, any] {
     const kv = this.e.conv(D);
-    if(typeof kv[1] === 'boolean') {
+    if (typeof kv[1] === 'boolean') {
       return [kv[0], !kv[1]]
     }
     return kv;
@@ -98,10 +100,24 @@ class Token extends Expr {
 
 const test = (e: Expr) => {
   const code = e.conv(D);
-  console.log(code);  
+  console.log(code);
 }
 
 test(new Let('色', new More('赤')))
 test(new Token('跳ねる'))
 test(new Not(new Token('固定')))
+
+const CJGrammar = CJ()
+const CJParser = PAsm.generate(CJGrammar, 'Sentence');
+
+const parse = (s: string) => {
+  const t = CJParser(s)
+  console.log(t.dump())
+}
+
+parse('色は赤い')
+parse('色は赤い')
+parse('色は赤く、跳ねる')
+
+//PAsm.example(CJGrammar, 'Sentence', '吾輩は猫である')
 
