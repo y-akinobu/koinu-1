@@ -112,6 +112,7 @@ const CJParser = PAsm.generate(CJGrammar, 'Sentence');
 
 const parse = (s: string) => {
   const t = CJParser(s)
+  // t.gettag でタグが出てくる
   console.log(t.dump())
 }
 
