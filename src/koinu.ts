@@ -5,7 +5,7 @@ type dict = { [key: string]: [string | undefined, any] }
 
 const D: dict = {
   '色': ['fillStyle', undefined],
-  '赤': [undefined, '#e60033'],
+  '赤': ['fillStyle', '#e60033'],
   '跳ね': ['restitution', 0.8],
   '固定': ['isStatic', true]
 }
@@ -122,10 +122,10 @@ class Not extends Expr {
   }
 }
 
-const test = (e: Expr) => {
-  const code = e.conv(D);
-  console.log(code);
-}
+// const test = (e: Expr) => {
+//   const code = e.conv(D);
+//   console.log(code);
+// }
 
 // test(new Let('色', new More('赤')))
 // test(new Token('跳ねる'))
